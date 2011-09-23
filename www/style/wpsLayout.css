@@ -1,0 +1,144 @@
+/****************************************************************
+* 52°North WPS OpenLayers Client
+* for using WPS-based processes in browser-based applications.
+*
+* Copyright (C) 2010
+* Janne Kovanen, Finnish Geodetic Institute
+* Raphael Rupprecht, Institute for Geoinformatics
+*
+* This program is free software; you can redistribute it and/or
+*
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+*
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+*
+* along with this program; if not, write to the Free Software
+*Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+***************************************************************/
+
+img.usageCheckbox {}
+input.valueCheckbox {}
+
+input.hiddenCheckbox {
+        /* visibility: collapse;// hidden; */
+        display: none;
+}
+
+td.inputValue {
+        text-align: left;
+}
+
+td.button {
+        padding-left: 5px;
+        text-align: center;
+}
+
+select.inputValue {
+        width: 100%;
+        text-align: left;
+}
+
+th.usageValue {
+        width: 40px;
+        text-align: center;
+}
+
+td.usageValue {
+        text-align: left;
+}
+
+table.processInputs {
+        width: 100%;
+}
+
+div.minMax {
+        position: absolute;
+        top: 5px;
+    right: 0px;
+}
+
+h1.wpsMainLabel {
+        margin-top: 0px;
+        margin-right: 0px;
+        margin-left: 4px;
+        margin-bottom: 0px;
+}
+
+div.wpsSubLabel {
+        margin-top: 0px;
+        margin-right: 0px;
+        margin-left: 3px;
+        margin-bottom: 2px;
+        border-bottom: 1px solid black;
+        font-weight: bold;
+        font-family: arial;
+        font-size: 12px;
+}
+
+div.xmlViewer {
+        display: block;
+        position: relative;
+        /*left: 20px;*/
+        margin: 20px 20px 20px 20px;
+        padding: 0px 0px 0px 0px; 
+        width: 100%; 
+}
+
+div.xmlViewer {
+        display: block;
+        position: relative;
+        left: 20px;
+        margin: 0px 0px 0px 0px;
+        padding: 0px 0px 0px 0px; 
+}
+
+span.xmlViewerTagSymbol {}
+span.xmlViewerNodeName {}
+span.xmlViewerAttrName {}
+span.xmlViewerAttrValue {}
+
+div#scrollableInputsDiv {
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        margin: 0px 0px 0px 0px;
+        padding: 0px 0px 0px 0px;
+        width: 100%;
+        max-height: 120px;
+        overflow: auto;
+}
+
+div#wpsDiv {
+        padding: 0px 0px 0px 0px;
+    width: 100%;
+    height: 100%;
+}
+
+select#serviceList {
+        display: block;
+        width: 100%;
+        height: 100%;
+}
+
+input#newService {
+        width: 100%;
+}
+
+div.dataArray {
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        margin: 0px 0px 0px 0px;
+        padding: 0px 0px 0px 0px;
+        width: 100%;
+        max-height: 120px;
+        overflow: auto;
+}

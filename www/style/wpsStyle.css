@@ -1,0 +1,189 @@
+/****************************************************************
+* 52°North WPS OpenLayers Client
+* for using WPS-based processes in browser-based applications.
+*
+* Copyright (C) 2010
+* Janne Kovanen, Finnish Geodetic Institute
+* Raphael Rupprecht, Institute for Geoinformatics
+*
+* This program is free software; you can redistribute it and/or
+*
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+*
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+*
+* along with this program; if not, write to the Free Software
+*Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+***************************************************************/
+
+body{
+margin:0;
+padding: 0;
+}
+label.infoText {
+        color: white;
+        font-size: 10px;
+        font-weight: normal;
+}
+
+label.popup_checkbox {
+        color: white;
+        font-size: 10px;
+        font-weight: normal;
+}
+
+div.xmlMainViewer {
+        background-color: lightGray;
+        color: black;
+}
+
+div.xmlViewer {
+        background-color: transparent;
+}
+
+span.xmlViewerTagSymbol {
+        background-color: transparent;
+        color: blue;
+        font-weight: normal;
+}
+
+span.xmlViewerNodeName {
+        background-color: transparent;
+        color: #8B0000; /* darkRed; */
+        font-weight: normal;
+}
+
+span.xmlViewerAttrName {
+        background-color: transparent;
+        color:         #FF0000; /* red;  */
+        font-weight: normal;
+}
+
+span.xmlViewerAttrValue {
+        background-color: transparent;
+        color: black;
+        font-weight: normal;
+}
+
+div#scrollableInputsDiv {
+        background-color: transparent;
+        border-width: 1px;
+        border-color: white;
+        border-style: ridge;
+}
+
+div.dataArray {
+        background-color: transparent;
+        border-width: 1px;
+        border-color: white;
+        border-style: ridge;
+}
+
+table.dataArray {
+        background-color: transparent;
+        color: white;
+        font-size: 10px;
+        font-family: Sans-serif, Arial;
+}
+
+table.dataArray th {
+        font-weight: bold;
+        font-style: italic;
+}
+
+table.dataArray td {
+        font-weight: normal;
+        font-style: normal;
+        border-bottom: 1px dotted #6699CC;
+        border-left: 1px dotted #6699CC
+}
+
+table.verticalArray {
+        background-color: transparent;
+        color: white;
+        font-size: 10px;
+        font-family: Sans-serif, Arial;
+}
+
+table.verticalArray th {
+        font-weight: bold;
+        font-style: italic;
+}
+
+table.verticalArray td {
+        font-weight: normal;
+        font-style: normal;
+        border-bottom: 1px dotted #6699CC;
+}
+
+th.usageValue {
+        background-color: transparent;
+        color: white;
+        font-size: 10px;
+        font-family: Sans-serif, Arial;
+        font-weight: bold;
+        font-style: italic;
+}
+
+h1.wpsMainLabel {
+        background-color: transparent;
+        color: white;
+        font-size: 14px;
+        font-family: Sans-serif, Arial;
+        font-weight: bold;
+        font-style: italic;
+}
+div.layerswitcher_style{
+        background-color:#CCCCCC;
+        color: #353535;
+        font-size: 11px;
+        font-family: Sans-serif, Arial;
+        padding-left: 10px;
+}
+div.layerswitcher_topic_style{
+        background-color:#999999;
+        color: #353535;
+        font-size: 15px;
+        font-family: Sans-serif, Arial;
+        padding-top: 8px;
+        padding-bottom: 5px;
+        padding-left: 10px;
+        height: 20px;
+        font-weight: bold;
+}
+
+#container{
+        margin: 0;
+        padding: 0;
+        display: block;
+        height: 100%;
+        width: 100%;
+}
+#header{
+        background-color: #666666;
+        margin: 0;
+        padding: 0;
+        height: 100px;
+        width: 100%;
+        display: block;
+        border-bottom: 3px solid #353535;
+}
+#footer{
+        background-color: #353535;
+        margin: 0;
+        padding: 0;
+        height: 5px;
+        width: 100%;
+        display: block;
+}
+#colorPickerDiv{
+        overflow: auto;
+}

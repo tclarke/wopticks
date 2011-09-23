@@ -1,0 +1,75 @@
+MAP
+NAME "Boulder"
+UNITS METERS
+EXTENT 471538 4431322 475634 4435418
+
+IMAGETYPE png
+SIZE 512 512
+
+WEB
+  IMAGEPATH "/home/tclarke/wopticks/data/wpsoutputs"
+  IMAGEURL "/data/wpsoutputs"
+  LOG "/home/tclarke/wopticks/mapserv.log"
+  METADATA
+  	"wcs_label"		"WCS Demo Server"
+	"wcs_onlineresource"	"http://localhost/cgi-bin/mapserv?"
+  END
+END
+
+PROJECTION
+  "init=epsg:3857"
+END
+
+OUTPUTFORMAT
+  NAME png
+  DRIVER "AGG/PNG"
+  MIMETYPE "image/png"
+  IMAGEMODE RGB
+  EXTENSION "png"
+END
+
+OUTPUTFORMAT
+   NAME "GTiff"
+   DRIVER GDAL/GTiff
+   MIMETYPE "image/tiff"
+   IMAGEMODE FLOAT32
+   EXTENSION "tif"
+END
+
+LAYER
+  NAME "base"
+  STATUS ON
+  DATA "/home/tclarke/wopticks/data/Boulder/R1C1_scaled.tif"
+  TYPE RASTER
+  METADATA
+    "ows_enable_request"	"*"
+    "wcs_enable_request"	"*"
+    "wcs_label"			"boulder_scaled"
+    "wcs_rangeset_name"		"boulder_scaled"
+    "wcs_rangeset_label"	"boulder_scaled"
+  END
+  PROCESSING "SCALE=AUTO"
+  PROCESSING "BANDS=4,3,2"
+  PROJECTION
+	"init=epsg:32613"
+  END
+END
+
+LAYER
+  NAME "boulder"
+  DATA "/home/tclarke/wopticks/data/Boulder/10APR08181517-M3DS_R1C1-052408867030_01_P001.TIF"
+  TYPE RASTER
+  STATUS ON
+  METADATA
+    "ows_enable_request"	"*"
+    "wcs_enable_request"	"*"
+    "wcs_label"			"boulder"
+    "wcs_rangeset_name"		"boulder"
+    "wcs_rangeset_label"	"boulder"
+  END
+  PROJECTION
+	"init=epsg:32613"
+  END
+END
+
+END

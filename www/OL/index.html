@@ -1,0 +1,277 @@
+<!--
+52°North WPS OpenLayers Client
+for using WPS-based processes in browser-based applications.
+
+Copyright (C) 2010
+Janne Kovanen, Finnish Geodetic Institute
+Raphael Rupprecht, Institute for Geoinformatics
+52North GmbH
+
+This program is free software; you can redistribute it and/or
+
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+        <title>52N WPS OpenLayers Client</title>
+        <meta content="text/html; charset=iso-8859-1" http-equiv="content-type"/>
+        <link rel="stylesheet" type="text/css" href="css/wpsStyle.css" />
+        <link rel="stylesheet" type="text/css" href="css/wpsLayout.css" />
+        <link rel="stylesheet" type="text/css" href="css/ol_style.css" />
+		
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
+        <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>       <!-- OL latest stable version  -->
+
+        <script type="text/javascript" src="proj4js-compressed.js"></script>
+        <script type="text/javascript" src="lib/wps-ol-client.js"></script>
+        <script type="text/javascript" src="sarissa.js"></script>
+        <script type="text/javascript" src="picker.js"></script>
+        <script type="text/javascript" src="jscolor/jscolor.js"></script>
+        <script src='http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1'></script>
+		<script type="text/javascript" src="OpenLayers Extensions/WpsResultLayerSwitcher.js"></script>		<!-- Custom OL class -->
+		<script type="text/javascript" src="OpenLayers Extensions/MapExtent.js"></script>
+		<script type="text/javascript" src="OpenLayers Extensions/GMLExtent.js"></script>
+		<script type="text/javascript" src="OpenLayers Extensions/UtilChange.js"></script>
+
+        <script type="text/javascript">
+                var map;
+                var TCP = new TColorPicker();
+                var madrid = new OpenLayers.LonLat(40.4125, -3.703889);
+                var initialZoom = 0;
+                var initialScale = 1000;
+				// array containing the identifier, which should be used. If empty - all processes are read
+				var processFilter = [];
+
+                function addControls(map, editableLayer) {                 
+                        if(editableLayer != null) {								// Editable layer
+                                map.addControl(new OpenLayers.Control.EditingToolbar(editableLayer));
+                        }
+
+						map.addControls([										// OL extended function
+							new OpenLayers.Control.MousePosition(),
+							new OpenLayers.Control.OverviewMap(),
+							new OpenLayers.Control.Scale(),
+							new OpenLayers.Control.Attribution(),
+							new OpenLayers.Control.Navigation(),
+							new OpenLayers.Control.PanZoomBar(),
+							new OpenLayers.Control.ScaleLine(),
+							new OpenLayers.Control.MouseDefaults(),
+							new WOC.WPSClient(),								// ADDING THE WPS CONTROLS
+							new OpenLayers.Control.WpsResultLayerSwitcher()		// ADDING CUSTOM OL CONTROL
+						]);
+                }
+
+                function addLayers(map) {
+                        // ########## BASELAYERS ############################################################
+                        baselayer = new OpenLayers.Layer.WMS(
+                                  "OpenLayers WMS",
+                                  "http://labs.metacarta.com/wms/vmap0",
+                                  {layers: 'basic'}
+                        );
+                        
+                        // ########## OVERLAYS ###########################################################						
+						/* GML 2, WFS 1.0.0 #############################################################################
+						var wfs_tasmaniaRoads3 = new OpenLayers.Layer.Vector("tasmania_roads GML3, WFS 1.1.0", {
+					        strategies: [new OpenLayers.Strategy.BBOX()],								// only pulls the feature currently visible in the map display
+					        protocol: new OpenLayers.Protocol.WFS({
+					            url: "http://giv-wps.uni-muenster.de:8080/geoserver/wfs",
+					            featureType: "tasmania_roads",											// required
+					            featureNS: "http://www.openplans.org/ns1",								// optional
+								version: "1.0.0"
+					        })
+					    });*/										
+						
+						// tasmania roads, GML 3, WFS 1.0.0 #############################################################################
+						var in_options = {
+							'internalProjection': new OpenLayers.Projection("EPSG:4326"),
+							'externalProjection': new OpenLayers.Projection("EPSG:4326")
+						};			
+						var gmlOptions = {
+							featureType: "tasmania_roads",
+							featureNS: "http://www.openplans.org/ns1"
+						};				
+						var gmlOptionsIn = OpenLayers.Util.extend(
+							OpenLayers.Util.extend({}, gmlOptions),
+							in_options
+						);
+						var wfs_tasmaniaRoads = new OpenLayers.Layer.Vector("tasmania_roads GML3, WFS 1.0.0", {
+					        strategies: [new OpenLayers.Strategy.BBOX()],								// only pulls the feature currently visible in the map display
+					        protocol: new OpenLayers.Protocol.WFS({
+								url: "http://giv-wps.uni-muenster.de:8080/geoserver/wfs",
+					            featureType: "tasmania_roads",											// required
+					            featureNS: "http://www.openplans.org/ns1",								// optional
+								version: "1.0.0",
+								formatOptions: {outputFormat: 'GML3'},			
+								outputFormat: "GML3",
+								readFormat: new OpenLayers.Format.GML.v3(gmlOptionsIn)					// GML3 parser with options
+					        })
+					    });						
+
+						// GML 3, WFS 1.1.0 but yx order ##############################################################
+						/*var wfs_tasmaniaRoads = new OpenLayers.Layer.Vector("WFS Tasmania roads", {			
+					        strategies: [new OpenLayers.Strategy.BBOX()],										// only pulls the feature currently visible in the map display
+					        protocol: new OpenLayers.Protocol.WFS({
+					            url: "http://giv-wps.uni-muenster.de:8080/geoserver/wfs",
+					            featureType: "tasmania_roads",					// required
+					            featureNS: "http://www.openplans.org/ns1",	// optional
+								version: "1.1.0"
+					        })
+					    });*/
+						
+						// tasmania water bodies, GML 3, WFS 1.0.0 #############################################################################
+						var in_options = {
+							'internalProjection': new OpenLayers.Projection("EPSG:4326"),
+							'externalProjection': new OpenLayers.Projection("EPSG:4326")
+						};			
+						var gmlOptions = {
+							featureType: "tasmania_water_bodies",
+							featureNS: "http://www.openplans.org/ns2"
+						};				
+						var gmlOptionsIn = OpenLayers.Util.extend(
+							OpenLayers.Util.extend({}, gmlOptions),
+							in_options
+						);
+						var wfs_tasmaniaWaterbodies = new OpenLayers.Layer.Vector("tasmania_waterbodies GML3, WFS 1.0.0", {
+					        strategies: [new OpenLayers.Strategy.BBOX()],								// only pulls the feature currently visible in the map display
+					        protocol: new OpenLayers.Protocol.WFS({
+								url: "http://giv-wps.uni-muenster.de:8080/geoserver/wfs",
+					            featureType: "tasmania_water_bodies",									// required
+					            featureNS: "http://www.openplans.org/ns2",								// optional
+								version: "1.0.0",
+								formatOptions: {outputFormat: 'GML3'},			
+								outputFormat: "GML3",
+								readFormat: new OpenLayers.Format.GML.v3(gmlOptionsIn)					// GML3 parser with options
+					        })
+					    });							                 
+						
+						//tasmania state boundaries, GML 3, WFS 1.0.0 #############################################################################
+						var in_options = {
+							'internalProjection': new OpenLayers.Projection("EPSG:4326"),
+							'externalProjection': new OpenLayers.Projection("EPSG:4326")
+						};			
+						var gmlOptions = {
+							featureType: "tasmania_state_boundaries",
+							featureNS: "http://www.openplans.org/topp"
+						};				
+						var gmlOptionsIn = OpenLayers.Util.extend(
+							OpenLayers.Util.extend({}, gmlOptions),
+							in_options
+						);
+						var wfs_tasmaniaStateBoundaries = new OpenLayers.Layer.Vector("tasmania_state GML3, WFS 1.0.0", {
+					        strategies: [new OpenLayers.Strategy.BBOX()],								// only pulls the feature currently visible in the map display
+					        protocol: new OpenLayers.Protocol.WFS({
+								url: "http://giv-wps.uni-muenster.de:8080/geoserver/wfs",
+					            featureType: "tasmania_state_boundaries",								// required
+					            featureNS: "http://www.openplans.org/topp",								// optional
+								version: "1.0.0",
+								formatOptions: {outputFormat: 'GML3'},			
+								outputFormat: "GML3",
+								readFormat: new OpenLayers.Format.GML.v3(gmlOptionsIn)					// GML3 parser with options
+					        })
+					    });							                 						
+                        // end of tasmania state boundaries #############################################################################################
+ 
+						// tasmania fires, GML 3, WFS 1.0.0 #############################################################################
+						var in_options = {
+							'internalProjection': new OpenLayers.Projection("EPSG:4326"),
+							'externalProjection': new OpenLayers.Projection("EPSG:4326")
+						};			
+						var gmlOptions = {
+							featureType: "tasmania_fires",
+							featureNS: "http://www.openplans.org/ns3"
+						};				
+						var gmlOptionsIn = OpenLayers.Util.extend(
+							OpenLayers.Util.extend({}, gmlOptions),
+							in_options
+						);
+						var wfs_tasmaniaFires = new OpenLayers.Layer.Vector("tasmania_fires GML3, WFS 1.0.0", {
+					        strategies: [new OpenLayers.Strategy.BBOX()],								// only pulls the feature currently visible in the map display
+					        protocol: new OpenLayers.Protocol.WFS({
+								url: "http://giv-wps.uni-muenster.de:8080/geoserver/wfs",
+					            featureType: "tasmania_fires",											// required
+					            featureNS: "http://www.openplans.org/ns3",								// optional
+								version: "1.0.0",
+								formatOptions: {outputFormat: 'GML3'},			
+								outputFormat: "GML3",
+								readFormat: new OpenLayers.Format.GML.v3(gmlOptionsIn)					// GML3 parser with options
+					        })
+					    });						
+						// ########################################################################################
+			                                                
+                        // Adding the layers.
+                        map.addLayers([baselayer,
+                                       wfs_tasmaniaRoads,
+                                       wfs_tasmaniaWaterbodies,
+                                       wfs_tasmaniaStateBoundaries,
+									   wfs_tasmaniaFires]);
+
+                        // Centering the map.       Tasmanien weiter rausgezoomt: 138.647446,-37.08984,153.58887,-45.35156
+                        map.zoomToExtent(new OpenLayers.Bounds(143.96758,-40.26214,149.40582,-43.86017));
+
+                        // If centering is not possible set to maximum size.
+                        if (!map.getCenter()) map.zoomToMaxExtent();
+                }
+
+                function init() {
+                        OpenLayers.ProxyHost = "http://localhost:8080/wps_proxy/wps_proxy?url=";
+                        //OpenLayers.ProxyHost = "http://localhost/cgi-bin/proxy.cgi?url=";
+
+                        // Possible units: 'degrees' (or 'dd'), 'm', 'ft', 'km', 'mi', 'inches'.
+                        map = new OpenLayers.Map(document.getElementById("map"),
+                                {/*'maxExtent': bounds,
+                                        'projection': "EPSG:3067",*/
+                                        'units': "m",
+                                        'numZoomLevels': 20,
+                                        controls: []});
+                        addLayers(map);
+                        addControls(map, null);
+                }
+
+                function showHideIsSupported(){
+                        if(document.getElementById('isSupported').style.visibility == 'visible'){
+                             document.getElementById('isSupported').style.visibility = 'hidden';
+                             document.getElementById('showHideIsSupportedButton').innerText = "[Show isSupported]";
+                        } else {
+                             document.getElementById('isSupported').style.visibility = 'visible';
+                             document.getElementById('showHideIsSupportedButton').innerText = "[Hide isSupported]";
+                        }
+                }
+                
+                function closeDiv(divId){
+                        document.getElementById('container').removeChild(document.getElementById(divId));
+                }
+        </script>
+</head>
+<body onload="init()">
+        <div id="container">
+                <!--div id="header">
+                     <div class="ol_controls">
+                          <a id="showHideIsSupportedButton" class="ol" href="#" onClick="showHideIsSupported()">[Show isSupported]</a><br />
+                          <a href="#" class="ol" onClick="javascript:alert(map.getExtent());">[Get map extent]</a><br />
+                     </div>
+                     <div id="isSupported" class="isSupported"></div>
+                     <!--div id="colorPicker2" onClick="javascript:TCP.popup(this, 1)" style="background-color:green; width:10px; height:10px; display:block;"></div-->
+                <!--/div-->
+				<img src="img/52N_logo1.png" border="0" style="position:absolute; right: 5px; top: 5px; z-index:1010;" />
+                <!--div class="nav">
+                  <div class="layerswitcher_topic_style">Layer switcher</div>
+                  <div id="layerswitcher" class="layerswitcher_style"></div>
+                </div-->
+                <div id="map" style="height:100%; width:100%;"></div>
+        </div>
+</body>
+</html>

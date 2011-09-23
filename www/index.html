@@ -1,0 +1,62 @@
+<html><head><title>OpenLayers test</title>
+<script type="text/javascript" src="lib/OpenLayers.js"></script>
+<script type="text/javascript" src="webgl-utils.js"></script> 
+<script type="text/javascript" src="utils3d.js"></script> 
+<script type="text/javascript" src="webgl-debug.js"></script>
+<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>-->
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript" src="flotr/flotr/lib/prototype-1.6.0.2.js"></script>
+<script type="text/javascript" src="flotr/flotr/flotr-0.2.0-alpha.js"></script>
+<script type="text/javascript" src="WCS.js"></script>
+<script type="text/javascript" src="WPS.js"></script>
+<script type="text/javascript" src="WebGL.js"></script>
+<script type="text/javascript" src="wopticks.js"></script>
+<script id="vshader" type="x-shader/x-vertex">
+   attribute vec3 g_Position;
+   attribute vec2 g_TexCoord0;
+   varying vec2 texCoord;
+   void main()
+   {
+      gl_Position = vec4(g_Position.x, g_Position.y, g_Position.z, 1.0);
+      texCoord = g_TexCoord0;
+   }
+</script>
+<script id="fshader" type="x-shader/x-fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
+uniform sampler2D thresh;
+varying vec2 texCoord;
+uniform float threshold;
+void main()
+{
+  vec4 threshVal = texture2D(thresh, texCoord);
+  float v = threshVal.r;
+  if (v < threshold) {
+      gl_FragColor = vec4(0.0,1.0,0.0,1.0);
+  } else {
+      gl_FragColor = vec4(0.0,0.0,0.0,0.0);
+  }
+}
+
+</script>
+<link rel="stylesheet" href="theme/default/style.css" type="text/css">
+<style>
+.smallmap {
+	width: 512px;
+	height: 256px;
+	border: 1px solid #ccc;
+}
+.mediummap {
+	width: 650px;
+	height: 475px;
+	border: 1px solid #ccc;
+}
+</style>
+</head>
+<body onload="init()">
+     <div id="map" class="mediummap"></div>
+     <hr/>
+     <div id="histogram" style="width: 650px; height: 100px; position: relative; cursor: default;"><h3>Calculating histogram...</h3></div>
+</body>
+</html>

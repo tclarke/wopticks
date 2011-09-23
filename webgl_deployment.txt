@@ -1,0 +1,16 @@
+Instructions for deployment on the OSGEO live DVD 2011
+
+
+boot dvd
+/usr/local/share/gisvm/bin/install_pywps_svn.sh
+sudo chmod 777 /usr/local/lib/python2.7/dist-packages/pywps/Templates/1_0_0
+install processes into /var/www/pywps/processes
+edit /var/www/pywps/pywps.cfg to set URLs to the machine's IP
+install www into /var/www/wopticks
+modify wopticks.js to change URLs and boulder.map location to the machine's IP
+ensure the proxy in wopticks.js is enabled
+add machine's IP to /usr/lib/cgi-bin/proxy.cgi
+install your data's map file into /var/www/wopticks/etc (boulder.map is a good starting point)
+modify boulder.map to point to data and URLs
+put data in /var/data (you'll need to pre-scale a 8-bit display image)
+Apply UMN.py patch to /usr/local/lib/python2.7/dist-packages/pywps/Wps/Execute
